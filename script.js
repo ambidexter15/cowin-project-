@@ -104,7 +104,7 @@ const pin = process.argv[2];
   }
 
   xlsx(data, settings)
-  console.log(arr);
+  console.log(vaccineSchedule);
   browser.close();
 
 
