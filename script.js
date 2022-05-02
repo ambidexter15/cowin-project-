@@ -1,9 +1,10 @@
 const puppeteer = require('puppeteer');
-let xlsx = require("json-as-xlsx")
+let xlsx = require("json-as-xlsx");
 
 let fs = require("fs");
 
 const pin = process.argv[2];
+const age = Number(process.argv[3]);
 
 (async () => {
   const browser = await puppeteer.launch({
@@ -17,6 +18,8 @@ const pin = process.argv[2];
   // await page.pdf({ path: 'file1.pdf', format: 'a4' });
   
   await page.waitForSelector(".mat-ripple.mat-tab-label.mat-focus-indicator.ng-star-inserted");
+
+ 
   await page.evaluate(function () {
     let Alltags = document.querySelectorAll(".mat-ripple.mat-tab-label.mat-focus-indicator.ng-star-inserted");
     Alltags[1].click();
@@ -26,7 +29,38 @@ const pin = process.argv[2];
   await page.waitForSelector(".pin-search input");
   await page.type(".pin-search input", pin);
   await waitAndClick(".searchBtn.pin-search-btn.accessibility-plugin-ac", page)
+  await page.waitForTimeout(8000)
+  // await page.evaluate(function(age){
+  //   let allAge = document.querySelectorAll("ul label.accessibility-plugin-ac");
+  //   if(age>=12 && age<=14){
+  //     allAge[0].click();
+  //   }else if(age>=15 && age<=18){
+  //     allAge[1].click();
+  //   }else if(age>18){
+  //     allAge[2].click();
+  //   }
+  //   return;
+  // },age)
+  await page.evaluate(function(age){
+    let allAges = document.querySelectorAll("ul label.accessibility-plugin-ac")
+      if(age>=12 && age<=14){
+       allAges[0].click();
+       
+    }
 
+    else if(age>=15 && age<=18){
+      allAges[1].click();
+      
+    }
+
+    else if(age>18) {
+      allAges[2].click();
+      
+      
+    }
+    return;
+  },age)
+  // await page.waitForTimeout(5000)
   await page.waitForSelector(".item.carousel-item.ng-star-inserted.active");
   // await page.waitForSelector(".item.active li");
   await page.waitForSelector(".col-sm-12.col-md-12.col-lg-12.cvc-list-item.ng-star-inserted")
@@ -69,6 +103,7 @@ const pin = process.argv[2];
 
 
   })
+  // console.log(arr)
   let vaccineSchedule = JSON.stringify(arr);
   fs.writeFileSync("ScheduleOf Vaccination.json", vaccineSchedule)
   let data = [
